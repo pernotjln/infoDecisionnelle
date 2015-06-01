@@ -71,7 +71,7 @@ public class Validateur {
 	/*
 	 * Permet d'évaluer une personne (à implémenter !)
 	 */
-	public Map<String, Double> evaluer(Person personne) {
+	public HashMap<String, Double> evaluer(Person personne) {
 		HashMap<String, Double> results = new HashMap<String, Double>();
 		
 		results.put("bon", 60.5);
