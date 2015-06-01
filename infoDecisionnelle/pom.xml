@@ -17,5 +17,16 @@
 			<artifactId>weka-stable</artifactId>
 			<version>3.6.6</version>
 		</dependency>
+		<dependency>
+			<groupId>de.erichseifert.gral</groupId>
+			<artifactId>gral-core</artifactId>
+			<version>0.10</version>
+		</dependency>
     </dependencies>
+    <repositories>
+		<repository>
+			<id>erichseifert.de</id>
+			<url>http://mvn.erichseifert.de/maven2</url>
+		</repository>
+	</repositories>
 </project>

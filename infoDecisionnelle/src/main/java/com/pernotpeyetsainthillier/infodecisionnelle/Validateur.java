@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import weka.classifiers.bayes.NaiveBayesUpdateable;
 import weka.core.Instance;
@@ -74,8 +75,11 @@ public class Validateur {
 	public HashMap<String, Double> evaluer(Person personne) {
 		HashMap<String, Double> results = new HashMap<String, Double>();
 		
-		results.put("bon", 60.5);
-		results.put("mauvais", 39.5);
+		Random rd = new Random();
+		Double n = new Double(rd.nextInt(100)+1);
+		
+		results.put("bon", n);
+		results.put("mauvais", 100 - n);
 		
 		return results;
 	}

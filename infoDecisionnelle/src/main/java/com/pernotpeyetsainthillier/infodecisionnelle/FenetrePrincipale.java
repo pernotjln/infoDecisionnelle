@@ -3,8 +3,18 @@ package com.pernotpeyetsainthillier.infodecisionnelle;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Random;
 
 import javax.swing.*;
+
+import de.erichseifert.gral.data.DataTable;
+import de.erichseifert.gral.plots.PiePlot;
+import de.erichseifert.gral.plots.PiePlot.PieSliceRenderer;
+import de.erichseifert.gral.plots.colors.LinearGradient;
+import de.erichseifert.gral.ui.InteractivePanel;
+import de.erichseifert.gral.util.Insets2D;
 
 public class FenetrePrincipale extends JFrame implements ActionListener {
 	private JComboBox<String> combo_checking_status;
@@ -14,11 +24,12 @@ public class FenetrePrincipale extends JFrame implements ActionListener {
 	private JComboBox<String> combo_savings_status;
 	private JComboBox<String> combo_other_payment_plans;
 	private JComboBox<String> combo_job;
+	private JPanel resultPanel;
 
 	public FenetrePrincipale() {
 		// Définition des propriétés principales de la fenêtre
 		this.setTitle("Décideur");
-		this.setSize(500, 300);
+		this.setSize(500, 600);
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    
@@ -122,11 +133,16 @@ public class FenetrePrincipale extends JFrame implements ActionListener {
 		panel_submit.setLayout(new BoxLayout(panel_submit, BoxLayout.LINE_AXIS));
 		panel_submit.add(button_submit);
 		
-		// On assemble le formulaire
+		// On crée la zone de résultat
+		this.resultPanel = new JPanel();
+		this.resultPanel.setLayout(new BorderLayout());
+
+		// On assemble le formulaire et le résultat
 		JPanel top = new JPanel();
 		top.setLayout(new BoxLayout(top, BoxLayout.PAGE_AXIS));
 		top.add(liste_combos);
 		top.add(panel_submit);
+		top.add(this.resultPanel);
 		
 		this.setContentPane(top);
 		
@@ -143,14 +159,47 @@ public class FenetrePrincipale extends JFrame implements ActionListener {
 		String purpose = this.combo_purpose.getSelectedItem().toString();
 		String savings_status = this.combo_savings_status.getSelectedItem().toString();
 		
-		JOptionPane jop1 = new JOptionPane();
-		String contenu = "checking status : " + checking_status + "\n" +
-				"credit_amount : " + credit_amount + "\n" +
-				"credit_history : " + credit_history + "\n" +
-				"job : " + job + "\n" +
-				"other_payment_plans : " + other_payment_plans + "\n" +
-				"purpose : " + purpose + "\n" +
-				"savings_status : " + savings_status + "\n";
-		jop1.showMessageDialog(null, contenu, "Résultat", JOptionPane.INFORMATION_MESSAGE);
+		Person personne = new Person(checking_status, credit_history, purpose, 
+				credit_amount, savings_status, other_payment_plans, job);
+		
+		HashMap<String, Double> results = Validateur.getInstance().evaluer(personne);
+		
+		System.out.println("bon : " + results.get("bon"));
+		System.out.println("mauvais : " + results.get("mauvais"));
+		
+		// Create data
+		DataTable data = new DataTable(Double.class);
+		data.add(results.get("bon"));
+		data.add(results.get("mauvais"));
+
+		// Create new pie plot
+		PiePlot plot = new PiePlot(data);
+
+		// Format plot
+		plot.getTitle().setText("Résultat de l'évaluation : ");
+		// Change relative size of pie
+		plot.setRadius(0.9);
+		// Add some margin to the plot area
+		plot.setInsets(new Insets2D.Double(20.0, 40.0, 40.0, 40.0));
+
+		PieSliceRenderer pointRenderer =
+				(PieSliceRenderer) plot.getPointRenderer(data);
+		// Change relative size of inner region
+		pointRenderer.setInnerRadius(0.4);
+		// Change the width of gaps between segments
+		pointRenderer.setGap(0.2);
+		// Change the colors
+		LinearGradient colors = new LinearGradient(Color.green, Color.red);
+		pointRenderer.setColor(colors);
+		// Show labels
+		pointRenderer.setValueVisible(true);
+		pointRenderer.setValueColor(Color.WHITE);
+		pointRenderer.setValueFont(Font.decode(null).deriveFont(Font.BOLD));
+		
+		this.resultPanel.removeAll();
+		this.resultPanel.add(new InteractivePanel(plot), BorderLayout.CENTER);
+		
+		this.resultPanel.revalidate();
+		this.resultPanel.repaint();
 	}
 }
