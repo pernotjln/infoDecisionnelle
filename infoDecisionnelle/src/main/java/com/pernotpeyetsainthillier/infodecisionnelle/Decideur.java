@@ -1,11 +1,13 @@
 package com.pernotpeyetsainthillier.infodecisionnelle;
 
+import javax.swing.JFrame;
+
 /**
  *
  * @author peyet
  */
 public class Decideur {
 	public static void main(String args[]) {
-		System.out.println("Hello world !");
+		new FenetrePrincipale();
 	}
 }
