@@ -7,13 +7,13 @@ public class Person extends Instance {
 	String checking_status;
 	String credit_history;
 	String purpose;
-	String credit_amount;
+	int credit_amount;
 	String savings_status;
 	String other_payment_plans;
 	String job;
 
 	public Person(String checking_status, String credit_history, String purpose,
-			String credit_amount, String savings_status, String other_payment_plans, String job) {
+			int credit_amount, String savings_status, String other_payment_plans, String job) {
 		this.checking_status = checking_status;
 		this.credit_history = credit_history;
 		this.purpose = purpose;
@@ -41,10 +41,10 @@ public class Person extends Instance {
 	public void setPurpose(String purpose) {
 		this.purpose = purpose;
 	}
-	public String getCredit_amount() {
+	public int getCredit_amount() {
 		return this.credit_amount;
 	}
-	public void setCredit_amount(String credit_amount) {
+	public void setCredit_amount(int credit_amount) {
 		this.credit_amount = credit_amount;
 	}
 	public String getSavings_status() {

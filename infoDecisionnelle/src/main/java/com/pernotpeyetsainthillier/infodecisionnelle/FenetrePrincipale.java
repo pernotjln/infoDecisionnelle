@@ -3,6 +3,8 @@ package com.pernotpeyetsainthillier.infodecisionnelle;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
@@ -16,15 +18,16 @@ import de.erichseifert.gral.plots.colors.LinearGradient;
 import de.erichseifert.gral.ui.InteractivePanel;
 import de.erichseifert.gral.util.Insets2D;
 
-public class FenetrePrincipale extends JFrame implements ActionListener {
+public class FenetrePrincipale extends JFrame implements ActionListener, KeyListener {
 	private JComboBox<String> combo_checking_status;
 	private JComboBox<String> combo_credit_history;
 	private JComboBox<String> combo_purpose;
-	private JComboBox<String> combo_credit_amount;
 	private JComboBox<String> combo_savings_status;
 	private JComboBox<String> combo_other_payment_plans;
 	private JComboBox<String> combo_job;
 	private JPanel resultPanel;
+	private JTextField text_credit_amount;
+	private JButton button_submit;
 
 	public FenetrePrincipale() {
 		// Définition des propriétés principales de la fenêtre
@@ -70,11 +73,8 @@ public class FenetrePrincipale extends JFrame implements ActionListener {
 		
 		// Select credit_amount
 		JLabel label_credit_amount = new JLabel("Credit Amount : ", SwingConstants.RIGHT);
-		combo_credit_amount = new JComboBox<String>(); 
-		combo_credit_amount.addItem("mean");
-		combo_credit_amount.addItem("std. dev.");
-		combo_credit_amount.addItem("weight sum");
-		combo_credit_amount.addItem("precision");
+		text_credit_amount = new JTextField();
+		text_credit_amount.addKeyListener(this);
 		
 		// Select savings_status
 		JLabel label_savings_status = new JLabel("Savings Status : ", SwingConstants.RIGHT);
@@ -114,7 +114,7 @@ public class FenetrePrincipale extends JFrame implements ActionListener {
 		liste_combos.add(combo_credit_history);
 		
 		liste_combos.add(label_credit_amount);
-		liste_combos.add(combo_credit_amount);
+		liste_combos.add(text_credit_amount);
 		
 		liste_combos.add(label_savings_status);
 		liste_combos.add(combo_savings_status);
@@ -126,8 +126,9 @@ public class FenetrePrincipale extends JFrame implements ActionListener {
 		liste_combos.add(combo_job);
 		
 		// On crée le bouton de soumission
-		JButton button_submit = new JButton("Vérifier ce client");
+		button_submit = new JButton("Vérifier ce client");
 		button_submit.addActionListener(this);
+		button_submit.setEnabled(false);
 		
 		JPanel panel_submit = new JPanel();
 		panel_submit.setLayout(new BoxLayout(panel_submit, BoxLayout.LINE_AXIS));
@@ -152,7 +153,7 @@ public class FenetrePrincipale extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		String checking_status = this.combo_checking_status.getSelectedItem().toString();
-		String credit_amount = this.combo_credit_amount.getSelectedItem().toString();
+		int credit_amount = Integer.parseInt(this.text_credit_amount.getText());
 		String credit_history = this.combo_credit_history.getSelectedItem().toString();
 		String job = this.combo_job.getSelectedItem().toString();
 		String other_payment_plans = this.combo_other_payment_plans.getSelectedItem().toString();
@@ -164,13 +165,10 @@ public class FenetrePrincipale extends JFrame implements ActionListener {
 		
 		HashMap<String, Double> results = Validateur.getInstance().evaluer(personne);
 		
-		System.out.println("bon : " + results.get("bon"));
-		System.out.println("mauvais : " + results.get("mauvais"));
-		
 		// Create data
 		DataTable data = new DataTable(Double.class);
-		data.add(results.get("bon"));
-		data.add(results.get("mauvais"));
+		data.add(results.get("good"));
+		data.add(results.get("bad"));
 
 		// Create new pie plot
 		PiePlot plot = new PiePlot(data);
@@ -202,4 +200,19 @@ public class FenetrePrincipale extends JFrame implements ActionListener {
 		this.resultPanel.revalidate();
 		this.resultPanel.repaint();
 	}
+
+	@Override
+	public void keyPressed(KeyEvent arg0) {}
+
+	@Override
+	public void keyReleased(KeyEvent arg0) {
+		if (this.text_credit_amount.getText().length() == 0) {
+			this.button_submit.setEnabled(false);
+		} else {
+			this.button_submit.setEnabled(true);
+		}
+	}
+
+	@Override
+	public void keyTyped(KeyEvent arg0) {}
 }
